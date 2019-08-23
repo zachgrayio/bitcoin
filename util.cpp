@@ -80,13 +80,7 @@ void RandAddSeed(bool fPerfmon)
             RAND_add(&hash, sizeof(hash), min(nSize/500.0, (double)sizeof(hash)));
             hash = 0;
             memset(pdata, 0, nSize);
-
-            time_t nTime;
-            time(&nTime);
-            struct tm* ptmTime = gmtime(&nTime);
-            char pszTime[200];
-            strftime(pszTime, sizeof(pszTime), "%x %H:%M:%S", ptmTime);
-            printf("%s  RandAddSeed() got %d bytes of performance data\n", pszTime, nSize);
+            printf("RandAddSeed() got %d bytes of performance data\n", nSize);
         }
     }
 }
@@ -235,12 +229,12 @@ bool ParseMoney(const char* pszIn, int64& nRet)
         if (*p == '.')
         {
             p++;
-            if (isdigit(*p))
-            {
-                nCents = 10 * (*p++ - '0');
-                if (isdigit(*p))
-                    nCents += (*p++ - '0');
-            }
+            if (!isdigit(p[0]) || !isdigit(p[1]))
+                return false;
+            nCents = atoi64(p);
+            if (nCents < 0 || nCents > 99)
+                return false;
+            p += 2;
             break;
         }
         if (isspace(*p))
@@ -252,17 +246,13 @@ bool ParseMoney(const char* pszIn, int64& nRet)
     for (; *p; p++)
         if (!isspace(*p))
             return false;
-    if (strWhole.size() > 14)
-        return false;
-    if (nCents < 0 || nCents > 99)
+    if (strWhole.size() > 17)
         return false;
     int64 nWhole = atoi64(strWhole);
-    int64 nPreValue = nWhole * 100 + nCents;
-    int64 nValue = nPreValue * CENT;
-    if (nValue / CENT != nPreValue)
+    int64 nValue = nWhole * 100 + nCents;
+    if (nValue / 100 != nWhole)
         return false;
-    if (nValue / COIN != nWhole)
-        return false;
+    nValue *= CENT;
     nRet = nValue;
     return true;
 }

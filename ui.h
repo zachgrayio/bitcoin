@@ -26,7 +26,6 @@ extern string DateTimeStr(int64 nTime);
 extern string FormatTxStatus(const CWalletTx& wtx);
 extern void CrossThreadCall(int nID, void* pdata);
 extern void MainFrameRepaint();
-extern void Shutdown(void* parg);
 
 
 
@@ -45,7 +44,6 @@ protected:
     void OnPaintListCtrl(wxPaintEvent& event);
     void OnMenuFileExit(wxCommandEvent& event);
     void OnMenuOptionsGenerate(wxCommandEvent& event);
-    void OnMenuOptionsChangeYourAddress(wxCommandEvent& event);
     void OnMenuOptionsOptions(wxCommandEvent& event);
     void OnMenuHelpAbout(wxCommandEvent& event);
     void OnButtonSend(wxCommandEvent& event);
@@ -234,7 +232,6 @@ public:
     // Custom
     bool fSending;
     wxString GetAddress();
-    bool CheckIfMine(const string& strAddress, const string& strTitle);
 };
 
 
